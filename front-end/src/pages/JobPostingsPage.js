@@ -1,13 +1,13 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import JobPostingCard from '../components/JobPostingCard';
 import SearchBar from '../components/SearchBar';
 
 function JobPostingsPage() {
   const [jobPostings, setJobPostings] = useState([]);
-  const [page, setPage] = useState(1);
-  const [loading, setLoading] = useState(false);
-  const [hasMore, setHasMore] = useState(true);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [totalCount, setTotalCount] = useState(0);
 
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
@@ -16,82 +16,57 @@ function JobPostingsPage() {
   const jobType = searchParams.get('jobType') || '';
   const salaryRange = searchParams.get('salaryRange') || '';
 
-  const fetchJobs = useCallback(async () => {
-    if (loading || !hasMore) return;
-    setLoading(true);
-    try {
-      // In a real application, this would be an API call to your Django backend
-      // For now, we'll simulate an API call with a timeout
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Simulated job data
-      const newJobs = Array(10).fill().map((_, index) => ({
-        id: jobPostings.length + index + 1,
-        title: `Job Title ${jobPostings.length + index + 1}`,
-        company: `Company ${jobPostings.length + index + 1}`,
-        location: ['San Francisco', 'New York', 'Remote'][Math.floor(Math.random() * 3)],
-        remote: Math.random() > 0.5,
-        salary: {
-          min: Math.floor(Math.random() * 50000) + 50000,
-          max: Math.floor(Math.random() * 100000) + 100000
-        },
-        jobType: ['Full-time', 'Part-time', 'Contract', 'Internship'][Math.floor(Math.random() * 4)]
-      }));
-
-      setJobPostings(prev => [...prev, ...newJobs]);
-      setPage(prev => prev + 1);
-      setHasMore(newJobs.length === 10);
-    } catch (error) {
-      console.error('Error fetching jobs:', error);
-    } finally {
-      setLoading(false);
-    }
-  }, [loading, hasMore, jobPostings.length]);
-
   useEffect(() => {
-    setJobPostings([]);
-    setPage(1);
-    setHasMore(true);
-    fetchJobs();
-  }, [query, locationQuery, jobType, salaryRange]);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window.innerHeight + document.documentElement.scrollTop !== document.documentElement.offsetHeight || loading) return;
-      fetchJobs();
+    const fetchJobs = async () => {
+      setLoading(true);
+      try {
+        const response = await fetch('http://127.0.0.1:8000/jobs/jobs/');
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        setJobPostings(data.results);
+        setTotalCount(data.count);
+      } catch (e) {
+        setError('Failed to fetch jobs. Please try again later.');
+        console.error('Error fetching jobs:', e);
+      } finally {
+        setLoading(false);
+      }
     };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [fetchJobs, loading]);
+
+    fetchJobs();
+  }, []);
 
   const filteredJobs = jobPostings.filter(job => {
     const matchesQuery = job.title.toLowerCase().includes(query.toLowerCase()) ||
                          job.company.toLowerCase().includes(query.toLowerCase());
-    const matchesLocation = job.location.toLowerCase().includes(locationQuery.toLowerCase()) ||
-                            (locationQuery.toLowerCase() === 'remote' && job.remote);
-    const matchesJobType = !jobType || job.jobType.toLowerCase() === jobType.toLowerCase();
-    const matchesSalary = !salaryRange || (
-      salaryRange === '150000+' ? job.salary.max >= 150000 :
-      job.salary.min >= parseInt(salaryRange.split('-')[0]) &&
-      job.salary.max <= parseInt(salaryRange.split('-')[1])
-    );
-    return matchesQuery && matchesLocation && matchesJobType && matchesSalary;
+    const matchesLocation = job.location.toLowerCase().includes(locationQuery.toLowerCase());
+    // Add more filters here if your backend provides job type and salary information
+    return matchesQuery && matchesLocation;
   });
+
+  if (loading) {
+    return <div className="text-center mt-8">Loading jobs...</div>;
+  }
+
+  if (error) {
+    return <div className="text-center mt-8 text-red-600">{error}</div>;
+  }
 
   return (
     <div>
-      <h1 className="text-3xl font-bold mb-6">Jobs</h1>
+      <h1 className="text-3xl font-bold mb-6">Job Postings</h1>
       <div className="mb-8">
         <SearchBar />
       </div>
+      <p className="mb-4">Total jobs found: {totalCount}</p>
       <div className="space-y-6">
         {filteredJobs.map(job => (
           <JobPostingCard key={job.id} job={job} />
         ))}
       </div>
-      {loading && <p className="text-center mt-4">Loading more jobs...</p>}
-      {!hasMore && <p className="text-center mt-4">No more jobs to load.</p>}
-      {filteredJobs.length === 0 && !loading && (
+      {filteredJobs.length === 0 && (
         <p className="text-center text-gray-600 mt-8">No job postings found matching your search criteria.</p>
       )}
     </div>
