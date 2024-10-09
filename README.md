@@ -47,4 +47,13 @@ We suggest that you begin by typing:
   cd front-end
   npm start
 
-Happy hacking!
+Happy hackingOB!
+
+        ** implement the search functionality in your Job Board application:
+
+1. The SearchBar component is now available on both the HomePage and the JobPostingsPage.
+2. Users can enter job titles, keywords, companies, and locations to search for jobs.
+3. The search parameters are passed through the URL, allowing for easy sharing and bookmarking of search results.
+4. The JobPostingsPage filters the job listings based on the searc
+    install the `lucide-react` package for the icons if you haven't already:
+    npm install lucide-react
