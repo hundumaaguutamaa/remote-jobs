@@ -14,7 +14,7 @@ function HomePage() {
         <Link to="/job-postings" className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700">
           Browse Jobs
         </Link>
-        <Link to="/job-postings/new" className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700">
+        <Link to="/post-job" className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700">
           Post a Job
         </Link>
       </div>

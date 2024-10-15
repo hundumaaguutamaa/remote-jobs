@@ -25,8 +25,8 @@ function JobPostingsPage() {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
-        setJobPostings(data.results);
-        setTotalCount(data.count);
+        setJobPostings(data.results);  // Backend should paginate if necessary
+        setTotalCount(data.count || data.results.length);  // Adjust for your data structure
       } catch (e) {
         setError('Failed to fetch jobs. Please try again later.');
         console.error('Error fetching jobs:', e);
@@ -36,13 +36,14 @@ function JobPostingsPage() {
     };
 
     fetchJobs();
-  }, []);
+  }, []);  // Empty dependency array so it runs only once on mount
 
+  // Filtering the jobs based on query and location input
   const filteredJobs = jobPostings.filter(job => {
     const matchesQuery = job.title.toLowerCase().includes(query.toLowerCase()) ||
                          job.company.toLowerCase().includes(query.toLowerCase());
     const matchesLocation = job.location.toLowerCase().includes(locationQuery.toLowerCase());
-    // Add more filters here if your backend provides job type and salary information
+    // Additional filters (jobType, salaryRange) can be applied here if your backend provides such fields
     return matchesQuery && matchesLocation;
   });
 

@@ -8,6 +8,7 @@ function PostJobPage() {
   const onSubmit = async (data) => {
     try {
       await api.post('/jobs/jobs/', data);
+
       alert('Job posted successfully!');
     } catch (error) {
       console.error('Error posting job:', error);
