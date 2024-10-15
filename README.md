@@ -61,3 +61,18 @@ Happy hackingOB!
     * Apply scrap
     install: pip install requests beautifulsoup4 django-cron
 
+Usage:
+cd frontend --- npm start
+cd remote_jobs Python manage.py runserver
+
+Functionalities:
+* Post job
+* Browse job
+* Search functionality basing title, city, job type salary ---frontend complete
+* Login and register frontend accomplished.
+![image](https://github.com/user-attachments/assets/8b702340-1f40-4006-8959-59c05ffed7f1)
+
+
+
+  
+
