@@ -4,8 +4,11 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 import HomePage from './pages/HomePage';
 import JobPostingsPage from './pages/JobPostingsPage';
+import PostJobPage from './pages/PostJobPage';
 import JobPostingDetailPage from './pages/JobPostingDetailPage';
-import NewJobPostingPage from './pages/NewJobPostingPage';
+import Login from './components/Auth/Login';
+import Register from './components/Auth/Register';
+import Profile from './components/Auth/Profile';
 
 function App() {
   return (
@@ -16,8 +19,11 @@ function App() {
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/job-postings" element={<JobPostingsPage />} />
-            <Route path="/job-postings/new" element={<NewJobPostingPage />} />
+            <Route path="/post-job" element={<PostJobPage />} />
             <Route path="/job-postings/:id" element={<JobPostingDetailPage />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/profile" element={<Profile />} />
           </Routes>
         </main>
         <Footer />

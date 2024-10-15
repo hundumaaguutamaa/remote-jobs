@@ -18,6 +18,7 @@ def save_job_if_not_exists(title, company, description, location, url, source, p
             source=source,
             posted_at=posted_at
         )
+        logger.info(f"Saved job: {title} at {company}")
 
 def fetch_github_jobs():
     url = 'https://jobs.github.com/positions.json?description=remote'
@@ -85,6 +86,7 @@ def fetch_we_work_remotely_jobs():
         logger.error(f"Error fetching We Work Remotely jobs: {e}")
 
 def fetch_all_jobs():
+    """Fetch jobs from all sources."""
     fetch_github_jobs()
     fetch_remote_ok_jobs()
     fetch_we_work_remotely_jobs()
