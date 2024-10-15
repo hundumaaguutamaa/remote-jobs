@@ -57,3 +57,7 @@ Happy hackingOB!
 4. The JobPostingsPage filters the job listings based on the searc
     install the `lucide-react` package for the icons if you haven't already:
     npm install lucide-react
+
+    * Apply scrap
+    install: pip install requests beautifulsoup4 django-cron
+
